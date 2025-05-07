@@ -6,7 +6,7 @@ module "vpc1" {
   auto_create_subnetworks         = false
   routing_mode                    = "REGIONAL"
   ip_cidr_ranges                  = var.ip_cidr_range1
-  region                          = var.region
+  region                          = "asia-south1"
   private_ip_google_access        = false
   firewall_data = [
     {
@@ -40,7 +40,7 @@ module "vpc2" {
   auto_create_subnetworks         = false
   routing_mode                    = "REGIONAL"
   ip_cidr_ranges                  = var.ip_cidr_range2
-  region                          = var.region
+  region                          = "asia-south2"
   private_ip_google_access        = false
   firewall_data = [
     {
@@ -71,26 +71,18 @@ module "instance1" {
   source                    = "./modules/compute"
   name                      = "instance1"
   machine_type              = "e2-micro"
-  zone                      = "us-central1-a"
+  zone                      = "asia-south1-a"
   metadata_startup_script   = "sudo apt-get update; sudo apt-get install nginx -y"
   deletion_protection       = false
   allow_stopping_for_update = true
   image                     = "ubuntu-os-cloud/ubuntu-2004-focal-v20220712"
   network_interfaces = [
     {
-      network    = module.vpc1.vpc_id
-      subnetwork = module.vpc1.subnets[0].id
-      access_configs = [
-        {
-          nat_ip = google_compute_address.instance1_ip.address
-        }
-      ]
+      network        = module.vpc1.vpc_id
+      subnetwork     = module.vpc1.subnets[0].id
+      access_configs = []
     }
   ]
-}
-
-resource "google_compute_address" "instance2_ip" {
-  name = "instance2-address"
 }
 
 # Instance 2
@@ -98,20 +90,54 @@ module "instance2" {
   source                    = "./modules/compute"
   name                      = "instance2"
   machine_type              = "e2-micro"
-  zone                      = "us-central1-a"
+  zone                      = "asia-south2-a"
   metadata_startup_script   = "sudo apt-get update; sudo apt-get install nginx -y"
   deletion_protection       = false
   allow_stopping_for_update = true
   image                     = "ubuntu-os-cloud/ubuntu-2004-focal-v20220712"
   network_interfaces = [
     {
-      network    = module.vpc2.vpc_id
-      subnetwork = module.vpc2.subnets[0].id
-      access_configs = [
-        {
-          nat_ip = google_compute_address.instance2_ip.address
-        }
-      ]
+      network        = module.vpc2.vpc_id
+      subnetwork     = module.vpc2.subnets[0].id
+      access_configs = []
     }
   ]
+}
+
+resource "google_compute_address" "vpn1_static_ip" {
+  name = "vpn1-static-ip"
+}
+
+resource "google_compute_address" "vpn2_static_ip" {
+  name = "vpn2-static-ip"
+}
+
+module "vpn1" {
+  source                 = "./modules/vpn"
+  vpc_id                 = module.vpc1.vpc_id
+  vpc_name               = module.vpc1.vpc_name
+  static_ip              = google_compute_address.vpn1_static_ip.address
+  vpn_gateway_name       = "vpn1-gateway"
+  vpn_tunnel_name        = "vpn1-tunnel"
+  peer_ip                = google_compute_address.vpn2_static_ip.address
+  shared_secret          = "vpn1-shared-secret"
+  route_name             = "route-to-vpc2"
+  dest_range             = google_compute_address.vpn2_static_ip.address
+  route_priority         = 1000
+  local_traffic_selector = [module.vpc1.subnets[0].ip_cidr_range]
+}
+
+module "vpn2" {
+  source                 = "./modules/vpn"
+  vpc_id                 = module.vpc2.vpc_id
+  vpc_name               = module.vpc2.vpc_name
+  static_ip              = google_compute_address.vpn2_static_ip.address
+  vpn_gateway_name       = "vpn2-gateway"
+  vpn_tunnel_name        = "vpn2-tunnel"
+  peer_ip                = google_compute_address.vpn1_static_ip.address
+  shared_secret          = "vpn2-shared-secret"
+  route_name             = "route-to-vpc1"
+  dest_range             = google_compute_address.vpn1_static_ip.address
+  route_priority         = 1000
+  local_traffic_selector = [module.vpc2.subnets[0].ip_cidr_range]
 }
