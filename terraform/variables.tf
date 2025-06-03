@@ -5,7 +5,7 @@ variable "location" {
 
 variable "project_id" {
   type    = string
-  default = "orbital-bee-455915-h5"
+  default = "encoded-alpha-457108-e8"
 }
 
 variable "ip_cidr_range1" {
