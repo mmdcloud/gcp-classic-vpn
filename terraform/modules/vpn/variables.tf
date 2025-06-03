@@ -42,3 +42,11 @@ variable "local_traffic_selector" {
   type        = list(string)  
 }
 
+variable "remote_traffic_selector" {
+  type        = list(string)  
+}
+
+variable "ike_version" {
+  type        = number  
+  default     = 2  
+}

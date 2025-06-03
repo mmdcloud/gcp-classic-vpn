@@ -5,6 +5,8 @@ resource "google_compute_vpn_tunnel" "tunnel" {
 
   target_vpn_gateway = google_compute_vpn_gateway.target_gateway.id
   local_traffic_selector = var.local_traffic_selector
+  remote_traffic_selector = var.remote_traffic_selector
+  ike_version = var.ike_version
   depends_on = [
     google_compute_forwarding_rule.fr_esp,
     google_compute_forwarding_rule.fr_udp500,
