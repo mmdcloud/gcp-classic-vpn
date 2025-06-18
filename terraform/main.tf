@@ -108,10 +108,6 @@ resource "google_compute_address" "vpn1_static_ip" {
   name = "vpn1-static-ip"
 }
 
-resource "google_compute_address" "vpn2_static_ip" {
-  name = "vpn2-static-ip"
-}
-
 module "vpn1" {
   source                  = "./modules/vpn"
   vpc_id                  = module.vpc1.vpc_id
@@ -127,6 +123,10 @@ module "vpn1" {
   route_priority          = 1000
   local_traffic_selector  = [module.vpc1.subnets[0].ip_cidr_range]
   remote_traffic_selector = [module.vpc2.subnets[0].ip_cidr_range]
+}
+
+resource "google_compute_address" "vpn2_static_ip" {
+  name = "vpn2-static-ip"
 }
 
 module "vpn2" {
