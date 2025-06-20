@@ -69,7 +69,7 @@ module "vpc2" {
 # Instance 1
 module "instance1" {
   source                    = "./modules/compute"
-  name                      = "instance1"
+  name                      = "vpn-instance1"
   machine_type              = "e2-micro"
   zone                      = "us-central1-a"
   metadata_startup_script   = "sudo apt-get update; sudo apt-get install nginx -y"
@@ -88,7 +88,7 @@ module "instance1" {
 # Instance 2
 module "instance2" {
   source                    = "./modules/compute"
-  name                      = "instance2"
+  name                      = "vpn-instance2"
   machine_type              = "e2-micro"
   zone                      = "us-east1-b"
   metadata_startup_script   = "sudo apt-get update; sudo apt-get install nginx -y"
