@@ -1,7 +1,7 @@
 # VPC1 
 module "vpc1" {
   source                          = "./modules/vpc"
-  vpc_name                        = "vpc1"
+  vpc_name                        = "vpn-vpc1"
   delete_default_routes_on_create = false
   auto_create_subnetworks         = false
   routing_mode                    = "REGIONAL"
@@ -35,7 +35,7 @@ module "vpc1" {
 # VPC2 
 module "vpc2" {
   source                          = "./modules/vpc"
-  vpc_name                        = "vpc2"
+  vpc_name                        = "vpn-vpc2"
   delete_default_routes_on_create = false
   auto_create_subnetworks         = false
   routing_mode                    = "REGIONAL"
