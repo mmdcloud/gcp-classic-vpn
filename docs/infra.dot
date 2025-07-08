@@ -1,0 +1,61 @@
+digraph INFRA {
+  node [ color = "black", fillcolor = "#E6E6E6", height =1, style = "filled,bold,rounded", fontname = "Arial" ];
+  "vpn-vpc1" [ label = "vpn-vpc1
+(google_compute_network)" ];
+  "vpn-vpc2" [ label = "vpn-vpc2
+(google_compute_network)" ];
+  "vpn-vpc1-subnet-1" [ label = "vpn-vpc1-subnet-1
+(google_compute_subnetwork)" ];
+  "vpn-vpc2-subnet-1" [ label = "vpn-vpc2-subnet-1
+(google_compute_subnetwork)" ];
+  "vpc1-firewall" [ label = "vpc1-firewall
+(google_compute_firewall)" ];
+  "vpc1-firewall-ssh" [ label = "vpc1-firewall-ssh
+(google_compute_firewall)" ];
+  "vpc2-firewall" [ label = "vpc2-firewall
+(google_compute_firewall)" ];
+  "vpc2-firewall-ssh" [ label = "vpc2-firewall-ssh
+(google_compute_firewall)" ];
+  "vpn-instance1" [ label = "vpn-instance1
+(google_compute_instance)", shape =rectangle, fillcolor = "#B7E0FF" ];
+  "vpn-instance2" [ label = "vpn-instance2
+(google_compute_instance)", shape =rectangle, fillcolor = "#B7E0FF" ];
+  "vpn1-static-ip" [ label = "vpn1-static-ip
+(google_compute_address)" ];
+  "vpn2-static-ip" [ label = "vpn2-static-ip
+(google_compute_address)" ];
+  "vpn1-gateway" [ label = "vpn1-gateway
+(google_compute_vpn_gateway)" ];
+  "vpn2-gateway" [ label = "vpn2-gateway
+(google_compute_vpn_gateway)" ];
+  "vpn1-tunnel" [ label = "vpn1-tunnel
+(google_compute_vpn_tunnel)" ];
+  "vpn2-tunnel" [ label = "vpn2-tunnel
+(google_compute_vpn_tunnel)" ];
+  "route-to-vpc2" [ label = "route-to-vpc2
+(google_compute_route)" ];
+  "route-to-vpc1" [ label = "route-to-vpc1
+(google_compute_route)" ];
+  "vpn-vpc1-subnet-1" -> "vpn-vpc1";
+  "vpn-vpc2-subnet-1" -> "vpn-vpc2";
+  "vpc1-firewall" -> "vpn-vpc1";
+  "vpc1-firewall" -> "vpn-instance2";
+  "vpc1-firewall-ssh" -> "vpn-vpc1";
+  "vpc2-firewall" -> "vpn-vpc2";
+  "vpc2-firewall" -> "vpn-instance1";
+  "vpc2-firewall-ssh" -> "vpn-vpc2";
+  "vpn-instance1" -> "vpn-vpc1-subnet-1";
+  "vpn-instance2" -> "vpn-vpc2-subnet-1";
+  "vpn1-gateway" -> "vpn-vpc1";
+  "vpn1-gateway" -> "vpn1-static-ip";
+  "vpn2-gateway" -> "vpn-vpc2";
+  "vpn2-gateway" -> "vpn2-static-ip";
+  "vpn1-tunnel" -> "vpn1-gateway";
+  "vpn1-tunnel" -> "vpn2-static-ip";
+  "vpn2-tunnel" -> "vpn2-gateway";
+  "vpn2-tunnel" -> "vpn1-static-ip";
+  "route-to-vpc2" -> "vpn-vpc1";
+  "route-to-vpc2" -> "vpn1-tunnel";
+  "route-to-vpc1" -> "vpn-vpc2";
+  "route-to-vpc1" -> "vpn2-tunnel";
+}
